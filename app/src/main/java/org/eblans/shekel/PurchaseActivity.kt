@@ -1,7 +1,6 @@
 package org.eblans.shekel
 
 import android.os.Bundle
-import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
@@ -16,7 +15,6 @@ import java.util.concurrent.TimeUnit
 class PurchaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_purchase)
 
