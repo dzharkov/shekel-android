@@ -16,20 +16,28 @@
 
 package org.eblans.shekel
 
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.Query
 import rx.Observable
 
-interface GitHub {
-    @GET("/repos/{owner}/{repo}/contributors")
-    fun contributors(
-            @Path("owner") owner: String,
-            @Path("repo") repo: String
-    ): Observable<List<Contributor>>
-
-    @GET("users/{user}/repos")
-    fun listRepos(@Path("user") user: String): Observable<List<Repo>>
+interface ShekelApi {
+    @GET("/login")
+    fun login(
+            @Query("username") username: String,
+            @Query("password") password: String
+    ): Observable<LoginResponse>
 }
 
-data class Contributor(val login: String, val contributions: Int)
-data class Repo(val name: String)
+private fun buildApiFactory() =
+        Retrofit.Builder().apply {
+            baseUrl("http://shekel.eblans.org")
+            addConverterFactory(GsonConverterFactory.create())
+            addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        }.build()
+
+fun buildShekelApi() = buildApiFactory().create(ShekelApi::class.java)
+
+data class LoginResponse(val access_token: String, val result: Int)

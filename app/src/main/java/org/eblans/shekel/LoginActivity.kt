@@ -10,14 +10,13 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.view.*
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.rx1.awaitSingle
 import org.jetbrains.anko.find
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import org.jetbrains.anko.longToast
+import java.util.concurrent.TimeUnit
 
 /**
  * A login screen that offers login via email/password.
@@ -45,26 +44,23 @@ class LoginActivity : AppCompatActivity() {
         // Store values at the time of the login attempt.
         showProgress(true)
 
-        val retrofit = Retrofit.Builder().apply {
-            baseUrl("https://api.github.com")
-            addConverterFactory(GsonConverterFactory.create())
-            addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        }.build()
-
-        val github = retrofit.create(GitHub::class.java)
-
         launch(UI) {
-            val contributors =
-                    github.contributors("JetBrains", "Kotlin")
-                            .awaitSingle().take(1)
+            delay(5, TimeUnit.SECONDS)
 
-            for ((name, contributions) in contributors) {
-                username.error = name
+            val (accessToken, result) =
+                    buildShekelApi().login(
+                            username.text.toString(), password.text.toString()
+                    ).awaitSingle()
+
+            if (result == 0) {
+                longToast("Wrong username/password")
+            }
+            else {
+                longToast(accessToken)
             }
 
             showProgress(false)
         }
-
     }
     /**
      * Shows the progress UI and hides the login form.
