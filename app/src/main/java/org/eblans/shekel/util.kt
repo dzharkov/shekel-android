@@ -20,6 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import rx.Observable
 
@@ -29,6 +30,11 @@ interface ShekelApi {
             @Query("username") username: String,
             @Query("password") password: String
     ): Observable<LoginResponse>
+
+    @GET("/purchase/{id}")
+    fun findPurchase(
+            @Path("id") id: Int
+    ): Observable<PurchaseEntity>
 }
 
 private fun buildApiFactory() =
@@ -41,3 +47,11 @@ private fun buildApiFactory() =
 fun buildShekelApi() = buildApiFactory().create(ShekelApi::class.java)
 
 data class LoginResponse(val access_token: String, val result: Int)
+data class PurchaseEntity(
+        val id: Int,
+        val name: String,
+        val cost: Int,
+        val owner_id: Int,
+        val party_id: Int,
+        val shared_ids: List<Int>
+)

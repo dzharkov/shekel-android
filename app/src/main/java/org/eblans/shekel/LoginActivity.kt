@@ -16,6 +16,7 @@ import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.rx1.awaitSingle
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.startActivity
 import java.util.concurrent.TimeUnit
 
 /**
@@ -45,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         showProgress(true)
 
         launch(UI) {
-            delay(5, TimeUnit.SECONDS)
+            delay(2, TimeUnit.SECONDS)
 
             val (accessToken, result) =
                     buildShekelApi().login(
@@ -57,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
             }
             else {
                 longToast(accessToken)
+                startActivity<PurchaseActivity>()
             }
 
             showProgress(false)
